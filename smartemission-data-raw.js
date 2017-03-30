@@ -148,7 +148,7 @@ module.exports = {
 	};
 	
 	
-	
+	var milliKelvinToCelsius = function(n){return Math.round((n/1e3-273.15)*100)/100};
 	
 
 	var options = {
@@ -196,6 +196,8 @@ module.exports = {
 			data.cityName			= '..'; //geoLocation.cityName;
 			
 			//observation=stress:01
+			
+			var temp = 
 		
 			data.categories			= [];
 			data.observation		= 
@@ -203,7 +205,7 @@ module.exports = {
 				//'apri-sensor-josuino-PM10:'+ pm10_Value + ',' +
 				'apri-sensor-josuino-CO2:'+ inRecord.s_co2/1000 + ',' +
 				'apri-sensor-josuino-rHum:'+ inRecord.s_humidity/1000 + ',' +
-				'apri-sensor-josuino-temperature:'+ inRecord.s_temperatureambient/10000 + ',' +
+				'apri-sensor-josuino-temperature:'+ milliKelvinToCelsius(inRecord.s_temperatureambient) + ',' +
 				'apri-sensor-josuino-pressure:'+ inRecord.s_barometer/100 + ',' +
 				'apri-sensor-josuino-light:'+ inRecord.s_lightsensortop;
 			sendData(data);
