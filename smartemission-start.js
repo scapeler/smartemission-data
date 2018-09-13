@@ -3,9 +3,10 @@
 
 var moduleSmartEmissionPath = require('path').resolve(__dirname, 'node_modules/scape-smartemission/../..');
 
-var apriConfig 	= require(moduleSmartEmissionPath + '/apri-config');
+var apriConfig 		= require(moduleSmartEmissionPath + '/apri-config');
 
-var main_module	= process.argv[2];
+var main_module		= process.argv[2];
+var argvStations	= process.argv[3];
 
 module.exports = {
 
@@ -22,7 +23,8 @@ module.exports = {
 			var options = {
 				systemFolderParent: apriConfig.getSystemFolderParent(),
 				configParameter: apriConfig.getConfigParameter(),
-				systemCode: apriConfig.getSystemCode()
+				systemCode: apriConfig.getSystemCode(),
+				argvStations: argvStations 
 			};
 			apriModule.init(options);
 		}

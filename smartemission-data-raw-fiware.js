@@ -1,5 +1,5 @@
 /*
-** Module: smartemission-data-raw
+** Module: smartemission-data-raw-fiware
 **
 **
 **
@@ -29,10 +29,11 @@ module.exports = {
 
 		secureSite 			= true;
 		siteProtocol 		= secureSite?'https://':'http://';
-		openiodUrl			= siteProtocol + 'openiod.org/' + _options.systemCode; //SCAPE604';
+		//openiodUrl			= siteProtocol + 'openiod.org/' + _options.systemCode; //SCAPE604';
+		openiodUrl			= siteProtocol + 'openiod.org/fiware/v2/entities?options=keyValues' ;
 		loopTimeMax			= 60000; //ms, 60000=60 sec
 
-		smartemissionUrl 			= 'http://whale.citygis.nl/sensorviewer2/devices/42/last'; 
+		smartemissionUrl 			= 'http://whale.citygis.nl/sensorviewer2/devices/42/last';
 		smartemissionFileName 		= 'smartemission.txt';
 
 		smartemissionLocalPathRoot = options.systemFolderParent + '/smartemission/';
@@ -131,11 +132,24 @@ module.exports = {
 	//http://localhost:4000/SCAPE604/openiod?SERVICE=WPS&REQUEST=Execute&identifier=transform_observation&action=insertom&sensorsystem=scapeler_shinyei&offering=offering_0439_initial&verbose=true&commit=true&observation=scapeler_shinyei:12.345&neighborhoodcode=BU04390402
 	//https://openiod.org/SCAPE604/openiod?SERVICE=WPS&REQUEST=Execute&identifier=transform_observation&action=insertom&sensorsystem=scapeler_shinyei&offering=offering_0439_initial&verbose=true&commit=true&observation=scapeler_shinyei:12.345&neighborhoodcode=BU04390402
 
-		var _url = openiodUrl + '/openiod?SERVICE=WPS&REQUEST=Execute&identifier=transform_observation&action=insertom&sensorsystem=apri-sensor-josuino&offering=offering_0439_initial&commit=true';
-		_url = _url + '&region=0439' + '&neighborhoodcode=' + data.neighborhoodCode + '&citycode=' + data.cityCode + '&observation=' + data.observation ;
+		var _url = openiodUrl;
+		//_url = _url + '&region=0439' + '&neighborhoodcode=' + data.neighborhoodCode + '&citycode=' + data.cityCode + '&observation=' + data.observation ;
 
+		console.log(data);
+		var json_obj = JSON.stringify(data);
 		console.log(_url);
-		request.get(_url)
+		console.log(json_obj)
+
+		request.post({
+    		headers: {'content-type': 'application/json'},
+    		url: _url,
+    		body: json_obj, //form: json_obj
+			}, function(error, response, body){
+  			console.log(body)
+			}
+		);
+/*
+		request.post(_url)
 			.on('response', function(response) {
 				console.log(response.statusCode) // 200
 				console.log(response.headers['content-type']) // 'image/png'
@@ -144,6 +158,7 @@ module.exports = {
 				console.log(err)
 			})
 		;
+*/
 
 	};
 
@@ -188,29 +203,15 @@ module.exports = {
 			}
 			writeFile(tmpFolder, fileName, outFile);
 */
-
 			var data				= {};
-			data.neighborhoodCode	= 'BU07721111';//'BU04390603'; //geoLocation.neighborhoodCode;
-			data.neighborhoodName	= '..'; //geoLocation.neighborhoodName;
-			data.cityCode			= 'GM0772'; //geoLocation.cityCode;
-			data.cityName			= '..'; //geoLocation.cityName;
-
-			//observation=stress:01
-
-			var temp =
-
-			data.categories			= [];
-			data.observation		=
-				//'apri-sensor-josuino-PM25:'+ pm25_Value + ',' +
-				//'apri-sensor-josuino-PM10:'+ pm10_Value + ',' +
-				'apri-sensor-josuino-CO2:'+ inRecord.s_co2/1000 + ',' +
-				'apri-sensor-josuino-rHum:'+ inRecord.s_humidity/1000 + ',' +
-				'apri-sensor-josuino-temperature:'+ milliKelvinToCelsius(inRecord.s_temperatureambient) + ',' +
-				'apri-sensor-josuino-pressure:'+ inRecord.s_barometer/100 + ',' +
-				'apri-sensor-josuino-light:'+ inRecord.s_lightsensortop;
-		//		'apri-sensor-josuino-o3:'+ inRecord.s_o3resistance;
-		//		'apri-sensor-josuino-no2:'+ inRecord.s_no2resistance;
-		//		'apri-sensor-josuino-co:'+ inRecord.s_coresistance;
+			data.id="SmartEmission-"+inRecord.id+"-"+inRecord.time;
+			data.type="AirQualityObserved";
+			data.dateObserved=inRecord.time;
+			data.relativeHumidity=inRecord.s_humidity/1000;
+			data.temperature=milliKelvinToCelsius(inRecord.s_temperatureambient);
+			data.CO2=inRecord.s_co2/1000;
+			data.lightTop=inRecord.s_lightsensortop;
+			data.pressure=inRecord.s_barometer/100;
 
 			sendData(data);
 
