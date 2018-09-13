@@ -206,6 +206,7 @@ module.exports = {
 			var data				= {};
 			data.id="SmartEmission-"+inRecord.id+"-"+inRecord.time;
 			data.type="AirQualityObserved";
+			data.sensorSystem="SmartEmission";
 			data.dateObserved=inRecord.time;
 			data.relativeHumidity=inRecord.s_humidity/1000;
 			data.temperature=milliKelvinToCelsius(inRecord.s_temperatureambient);
