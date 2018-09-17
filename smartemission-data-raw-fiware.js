@@ -204,7 +204,7 @@ module.exports = {
 			writeFile(tmpFolder, fileName, outFile);
 */
 			var data				= {};
-			data.id="SmartEmission-"+inRecord.id+"-"+inRecord.time;
+			data.id="SmartEmission-"+inRecord.id+"_"+inRecord.time;
 			data.type="AirQualityObserved";
 			data.sensorSystem="SmartEmission";
 			data.dateObserved=inRecord.time;
